@@ -12,6 +12,6 @@ import { HomeComponent } from './pages/home/home.component';
   imports: [
     CommonModule,
     AdminRoutingModule
-  ]
+  ] 
 })
 export class AdminModule { }
