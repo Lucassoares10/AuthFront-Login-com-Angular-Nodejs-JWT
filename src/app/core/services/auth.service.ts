@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { catchError, map, Observable, throwError } from 'rxjs';
 
 @Injectable({
@@ -13,7 +14,7 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) { }
 
   public Sign(payload: { email: string, password: string }): Observable<any> {
-    return this.http.post<{token: string}>(`${this.url}/sign`, payload).pipe(
+    return this.http.post<{ token: string }>(`${this.url}/sign`, payload).pipe(
       map((res) => {
         localStorage.removeItem('acess_token')
         localStorage.setItem('acess_token', JSON.stringify(res.token));
@@ -30,8 +31,19 @@ export class AuthService {
     );
   }
 
-  public logout(){
+  public logout() {
     localStorage.removeItem('acess_token');
     this.router.navigate(['']);
   }
+
+  public isAuthenticated(): boolean {
+    const token = localStorage.getItem("acess_token");
+
+    if (!token) {
+      return false;
+    }
+    const jwtHelper = new JwtHelperService();
+    return !jwtHelper.isTokenExpired(token);
+  }
+
 }
